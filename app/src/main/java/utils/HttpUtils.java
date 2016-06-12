@@ -16,6 +16,7 @@ public class HttpUtils {
             public void run() {
                 HttpURLConnection connection = null;
                 try {
+                    System.setProperty("http.keepAlive", "false");//solve a eof exception
                     URL url = new URL(address);
                     connection = (HttpURLConnection)url.openConnection();
                     connection.setRequestMethod("GET");
