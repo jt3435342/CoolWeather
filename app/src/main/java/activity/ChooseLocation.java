@@ -47,11 +47,13 @@ public class ChooseLocation extends Activity{
     private List<County> countyList;
     private List<String> datalist = new ArrayList<String>();
     private ProgressDialog progressDialog;
+    private boolean from_weatherInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        from_weatherInfo = getIntent().getBooleanExtra("FromWeatherInfo",false);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getBoolean("city_selected", false)) {
+        if (prefs.getBoolean("city_selected", false)&&!from_weatherInfo) {
             Intent intent = new Intent(this, WeatherInfo.class);
             startActivity(intent);
             finish();
@@ -197,7 +199,9 @@ public class ChooseLocation extends Activity{
             queryCities();
         } else if (currentLevel == LEVEL_CITY) {
             queryProvinces();
-        } else {
+        } else if(from_weatherInfo){
+            Intent intent = new Intent(this,WeatherInfo.class);
+            startActivity(intent);
             finish();
         }
     }

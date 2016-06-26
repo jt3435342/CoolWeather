@@ -6,6 +6,11 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#484E61" >
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/switch_city"
+            android:background="@drawable/home"/>
         <TextView
             android:id="@+id/city_name"
             android:layout_width="wrap_content"
@@ -13,6 +18,12 @@
             android:layout_centerInParent="true"
             android:textColor="#fff"
             android:textSize="24sp" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:id="@+id/refresh"
+            android:background="@drawable/refresh"/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"

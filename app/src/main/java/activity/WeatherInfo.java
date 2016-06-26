@@ -2,15 +2,18 @@ package activity;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import service.AutoUpdateService;
 import taojiang.coolweather.R;
 import utils.HttpListener;
 import utils.HttpUtils;
@@ -19,7 +22,7 @@ import utils.Utility;
 /**
  * Created by taojiang on 6/10/2016.
  */
-public class WeatherInfo extends Activity implements DialogInterface.OnClickListener{
+public class WeatherInfo extends Activity implements View.OnClickListener {
     private LinearLayout weatherInfoLayout;
     private TextView cityNameText;
     private TextView publishText;
@@ -40,8 +43,10 @@ public class WeatherInfo extends Activity implements DialogInterface.OnClickList
         temp1Text = (TextView) findViewById(R.id.temp1);
         temp2Text = (TextView) findViewById(R.id.temp2);
         currentDateText = (TextView) findViewById(R.id.current_date);
-        //switchCity = (Button) findViewById(R.id.switch_city);
-        //refreshWeather = (Button) findViewById(R.id.refresh_weather);
+        switchCity = (Button) findViewById(R.id.switch_city);
+        refreshWeather = (Button) findViewById(R.id.refresh);
+        switchCity.setOnClickListener(this);
+        refreshWeather.setOnClickListener(this);
         String countyCode = getIntent().getStringExtra("county_code");
         if(!TextUtils.isEmpty(countyCode)){
             publishText.setText("同步中。。。");
@@ -54,9 +59,25 @@ public class WeatherInfo extends Activity implements DialogInterface.OnClickList
     }
 
     @Override
-    public void onClick(DialogInterface dialog, int which) {
-
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.switch_city:
+                Intent intent = new Intent(this,ChooseLocation.class);
+                intent.putExtra("FromWeatherInfo",true);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.refresh:
+                publishText.setText("同步中。。。");
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                String weather_code = sharedPreferences.getString("weather_code","");
+                if(!TextUtils.isEmpty((weather_code))){
+                    queryWeatherInfo(weather_code);
+                }
+                break;
+        }
     }
+
     private void queryWeatherCode(String countyCode) {
         String address = "http://www.weather.com.cn/data/list3/city" +
                 countyCode + ".xml";
@@ -112,5 +133,16 @@ public class WeatherInfo extends Activity implements DialogInterface.OnClickList
         currentDateText.setText(prefs.getString("current_date", ""));
         weatherInfoLayout.setVisibility(View.VISIBLE);
         cityNameText.setVisibility(View.VISIBLE);
+        Intent i = new Intent(this, AutoUpdateService.class);
+        startService(i);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this,ChooseLocation.class);
+        intent.putExtra("FromWeatherInfo",true);
+        startActivity(intent);
+        finish();
     }
 }
